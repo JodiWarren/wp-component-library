@@ -8,7 +8,10 @@
 	"freeze": false,
 	"funcscope": true,
 	"futurehostile": true,
-	"iterator": true,
+  	"globals": {
+	  "TenUp": true
+	},
+  	"iterator": true,
 	"latedef": "nofunc",
 	"maxcomplexity": 3,
 	"maxdepth": 3,

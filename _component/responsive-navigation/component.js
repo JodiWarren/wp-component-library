@@ -55,18 +55,18 @@
 		// Bail out if there's no menu
 		if( !menu ) { return; }
 
-		var menu_id = menu.getAttribute( 'id' );
-		var menu_toggle = document.querySelector( options.toggle );
-		var menu_toggle_href = menu_toggle.getAttribute( 'href' );
-		var aria_controls = menu_toggle.getAttribute('aria-controls');
-		var menu_toggle_target = menu_toggle_href.split('#')[1];
-		var sub_menu_action = options.sub_menu_open;
-		var current_menu_item = menu.querySelector('.current-menu-item');
-		var menu_items_with_children = menu.querySelectorAll('.menu-item-has-children');
-		var menu_items_with_children_count = menu_items_with_children.length;
-		var currentTarget;
-		var target;
-		var i;
+		var menu_id = menu.getAttribute( 'id' ),
+			menu_toggle = document.querySelector( options.toggle ),
+			menu_toggle_href = menu_toggle.getAttribute( 'href' ),
+			aria_controls = menu_toggle.getAttribute('aria-controls'),
+			menu_toggle_target = menu_toggle_href.split('#')[1],
+			sub_menu_action = options.sub_menu_open,
+			current_menu_item = menu.querySelector('.current-menu-item'),
+			menu_items_with_children = menu.querySelectorAll('.menu-item-has-children'),
+			menu_items_with_children_count = menu_items_with_children.length,
+			currentTarget,
+			target,
+			i;
 
 		// Listener for the menu open/close action
 		function listener_menu( e ) {
@@ -97,7 +97,7 @@
 
 			}
 
-		}; // listener_menu()
+		} // listener_menu()
 
 		// Listener for submenu on click
 		function listener_submenu_click( e ) {
@@ -113,11 +113,11 @@
 				// Stop events from bubbling up to parent elements
 				e.stopPropagation();
 
-				var parent_menu = target.parentNode;
-				var sub_menu = parent_menu.querySelector('.sub-menu');
-				var all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' );
-				var all_open_menu_triggers_count = all_open_menu_triggers.length;
-				var t;
+				var parent_menu = target.parentNode,
+					sub_menu = parent_menu.querySelector('.sub-menu'),
+					all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' ),
+					all_open_menu_triggers_count = all_open_menu_triggers.length,
+					t;
 
 				if( get_screen_size( 'medium' ) || get_screen_size( 'large' ) ) {
 
@@ -153,16 +153,16 @@
 				}
 			}
 
-		}; // listener_submenu_click()
+		} // listener_submenu_click()
 
 		// When "hover", this is how focus should act
 		function listener_submenu_focus( e ) {
 
-			var target = e.target;
-			var parent_menu = target.parentNode;
-			var all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' );
-			var all_open_menu_triggers_count = all_open_menu_triggers.length;
-			var t;
+			var target = e.target,
+				parent_menu = target.parentNode,
+				all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' ),
+				all_open_menu_triggers_count = all_open_menu_triggers.length,
+				t;
 
 			if( get_screen_size( 'medium' ) || get_screen_size( 'large' ) ) {
 
@@ -183,10 +183,10 @@
 
 			menu_sub_open( target );
 
-		};
+		}
 
 		// Listener for the window resize
-		var listener_window = debounce( function( e ) {
+		var listener_window = debounce( function() {
 
 			if( get_screen_size( 'small' ) ) {
 
@@ -200,25 +200,29 @@
 
 		}, 100 ); // listener_window()
 
+		function checkKey(event, name, code) {
+			if (event.key !== undefined) {
+				return event.key === name;
+			}
+
+			if (event.keyIdentifier !== undefined) {
+				return event.keyIdentifier === name;
+			}
+
+			return event.keyCode === code;
+		}
+
 		// Close the menu if you click somewhere else
 		function listener_close_open_menus( e ) {
 
-			var open_menus = menu.querySelectorAll('.submenu-is-open');
-			var open_menus_count = open_menus.length;
-			var opn;
+			var open_menus = menu.querySelectorAll('.submenu-is-open'),
+				open_menus_count = open_menus.length,
+				opn;
 
 			// if the event is keyup and it was the ESC key
 			if( e.type === 'keyup' ) {
 
-				var escapePressed = false;
-
-				if (event.key !== undefined) {
-					escapePressed = event.key === 'Escape';
-				} else if (event.keyIdentifier !== undefined) {
-					escapePressed = event.keyIdentifier === 'Escape';
-				} else if (event.keyCode !== undefined) {
-					escapePressed = event.keyCode === 27;
-				}
+				var escapePressed = checkKey(e, 'Escape', 27);
 
 				// We were getting some errors, so let's add in a checkpoint
 				if ( open_menus_count && escapePressed ) {
@@ -238,26 +242,19 @@
 				} // if
 
 			// If the event was a mouseup
-			} else if( e.type === 'mouseup' ) {
+			} else if(
+				e.type === 'mouseup' &&
+				!menu.contains( e.target ) &&
+				menu.querySelector('.submenu-is-open') &&
+				open_menus_count
+			) {
+				for( opn = 0; opn < open_menus.length; opn = opn + 1 ) {
 
-				if ( !menu.contains( e.target ) && menu.querySelector('.submenu-is-open') ) {
+					menu_sub_close( open_menus[opn] );
 
-					// We were getting some error, so let's add in a second checkpoint
-					if ( open_menus_count ) {
-
-						for( opn = 0; opn < open_menus.length; opn = opn + 1 ) {
-
-							menu_sub_close( open_menus[opn] );
-
-						} // for
-
-					}
-
-				} // if
-
+				} // for
 			}
-
-		}; // listener_close_open_menus()
+		} // listener_close_open_menus()
 
 		function menu_sub_close( open_item ) {
 
@@ -268,7 +265,7 @@
 				open_item.parentNode.querySelector('.sub-menu').setAttribute( 'aria-hidden', 'true');
 			}
 
-		}; // menu_sub_close()
+		} // menu_sub_close()
 
 		function menu_sub_open( closed_item ) {
 
@@ -279,7 +276,7 @@
 				closed_item.parentNode.querySelector('.sub-menu').setAttribute( 'aria-hidden', 'false');
 			}
 
-		}; // menu_sub_open()
+		} // menu_sub_open()
 
 		// Method to create the small screen menu
 		function menu_create() {
@@ -320,14 +317,14 @@
 
 			}
 
-		}; // menu_create()
+		} // menu_create()
 
 		// Method to destroy the small screen menu
 		function menu_destroy() {
 
-			var tmp_open
-			var tmp_open_count
-			var t;
+			var tmp_open,
+				tmp_open_count,
+				t;
 
 			if( !document.body.classList.contains( 'menu-destroyed' ) ) {
 
@@ -366,7 +363,7 @@
 
 			}
 
-		};
+		}
 
 		// Check init menu state
 		if( get_screen_size( 'small' ) ) {
@@ -451,7 +448,7 @@
 			return true;
 		}
 
-	};
+	}
 
 	// Debounce
 	function debounce( func, wait, immediate ) {
@@ -472,6 +469,6 @@
 			if (callNow) func.apply(context, args);
 		};
 
-	};
+	}
 
 } )();
