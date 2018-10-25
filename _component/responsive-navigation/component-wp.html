@@ -31,12 +31,10 @@
 
 	<nav class="site-navigation" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
 
-		<a href="#primary-menu" id="js-menu-toggle" class="site-menu-toggle">
-			<span class="screen-reader-text">
-				<?php esc_html_e( 'Primary Menu', 'tenup' ); ?>
-			</span>
+		<button id="js-menu-toggle" class="site-menu-toggle" aria-controls="menu-main-nav">
+			<?php esc_html_e( 'Primary Menu', 'tenup' ); ?>
 			<span aria-hidden="true">☰</span>
-		</a>
+		</button>
 
 		<?php
 			wp_nav_menu( array(
