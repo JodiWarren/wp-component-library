@@ -60,7 +60,7 @@
 		var menu_toggle_href = menu_toggle.getAttribute( 'href' );
 		var aria_controls = menu_toggle.getAttribute('aria-controls');
 		var menu_toggle_target = menu_toggle_href.split('#')[1];
-		var sub_menu_acion = options.sub_menu_open;
+		var sub_menu_action = options.sub_menu_open;
 		var current_menu_item = menu.querySelector('.current-menu-item');
 		var menu_items_with_children = menu.querySelectorAll('.menu-item-has-children');
 		var menu_items_with_children_count = menu_items_with_children.length;
@@ -115,8 +115,6 @@
 
 				var parent_menu = target.parentNode;
 				var sub_menu = parent_menu.querySelector('.sub-menu');
-				var all_open_menus = menu.querySelectorAll('.child-has-focus');
-				var all_open_menus_count = all_open_menus.length;
 				var all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' );
 				var all_open_menu_triggers_count = all_open_menu_triggers.length;
 				var t;
@@ -160,10 +158,8 @@
 		// When "hover", this is how focus should act
 		function listener_submenu_focus( e ) {
 
-			var currentTarget = e.currentTarget;
 			var target = e.target;
 			var parent_menu = target.parentNode;
-			var sub_menu = parent_menu.querySelector('.sub-menu');
 			var all_open_menu_triggers = menu.querySelectorAll( '.child-has-focus > a.submenu-is-open' );
 			var all_open_menu_triggers_count = all_open_menu_triggers.length;
 			var t;
@@ -212,10 +208,20 @@
 			var opn;
 
 			// if the event is keyup and it was the ESC key
-			if( e.type === 'keyup' && e.keyCode == 27 ) {
+			if( e.type === 'keyup' ) {
+
+				var escapePressed = false;
+
+				if (event.key !== undefined) {
+					escapePressed = event.key === 'Escape';
+				} else if (event.keyIdentifier !== undefined) {
+					escapePressed = event.keyIdentifier === 'Escape';
+				} else if (event.keyCode !== undefined) {
+					escapePressed = event.keyCode === 27;
+				}
 
 				// We were getting some errors, so let's add in a checkpoint
-				if ( open_menus_count ) {
+				if ( open_menus_count && escapePressed ) {
 
 					// Loop through all the open menus and close them
 					for( opn = 0; opn < open_menus.length; opn = opn + 1 ) {
@@ -225,7 +231,7 @@
 					} // for
 
 					// Return focus to the first open menu
-					if( sub_menu_acion === 'click' ) {
+					if( sub_menu_action === 'click' ) {
 						open_menus[0].focus();
 					}
 
@@ -295,7 +301,7 @@
 				// Loop through all submenus and bind events when needed
 				for( i = 0; i < menu_items_with_children_count; i = i + 1 ) {
 
-					if( sub_menu_acion !== 'click' ) {
+					if( sub_menu_action !== 'click' ) {
 
 						menu_items_with_children[i].addEventListener( 'click', listener_submenu_click );
 						menu_items_with_children[i].removeEventListener( 'focusin', listener_submenu_focus );
@@ -330,7 +336,7 @@
 
 				// Loop through all submenus and bind events when needed
 				for( i = 0; i < menu_items_with_children_count; i = i + 1 ) {
-					if( sub_menu_acion !== 'click' ) {
+					if( sub_menu_action !== 'click' ) {
 						menu_items_with_children[i].removeEventListener( 'click', listener_submenu_click );
 						menu_items_with_children[i].addEventListener( 'focusin', listener_submenu_focus );
 						menu.classList.remove('uses-click');
@@ -338,7 +344,7 @@
 				}
 
 				// If we're not using click, the open menus need to be reset
-				if( sub_menu_acion !== 'click' ) {
+				if( sub_menu_action !== 'click' ) {
 
 					tmp_open = document.querySelectorAll('.child-has-focus');
 					tmp_open_count = tmp_open.length;
@@ -408,12 +414,12 @@
 			menu_items_with_children[i].querySelector('.sub-menu').setAttribute( 'aria-label', 'Submenu' );
 
 			// If the screen is small or the action is set to click
-			if( get_screen_size( 'small' ) || sub_menu_acion === 'click' ) {
+			if( get_screen_size( 'small' ) || sub_menu_action === 'click' ) {
 
 				menu_items_with_children[i].addEventListener( 'click', listener_submenu_click );
 				menu.classList.add('uses-click');
 
-			} else if ( sub_menu_acion !== 'click' ) {
+			} else if ( sub_menu_action !== 'click' ) {
 
 				if( get_screen_size( 'medium' ) || get_screen_size( 'large' ) ) {
 
